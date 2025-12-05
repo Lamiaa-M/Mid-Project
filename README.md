@@ -1,7 +1,7 @@
 # Mid-Project
 
-#Zomato Bengaluru Restaurants: A
-#Data-Driven Analysis
+Zomato Bengaluru Restaurants: A
+Data-Driven Analysis
 Mid Project After Cleansing 3 Epsilon AI
 This presentation offers an in-depth analysis of the Zomato Bengaluru restaurant
 dataset, providing key insights into the city's vibrant culinary landscape. Utilizing 20
