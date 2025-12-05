@@ -3,7 +3,35 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import streamlit as st
+import gdown  # pip install gdown
+import os
 
+@st.cache_data
+def load_data():
+    # Google Drive file ID
+    file_id = "1EPj5DwO4rxEZ88yQR3NqLfcxpg6NWLu2"
+    output = "ZomatoCleanedData.csv"
+
+    if not os.path.exists(output):
+        gdown.download(f"https://drive.google.com/uc?id={file_id}", output, quiet=False)
+
+    df = pd.read_csv(output)
+
+    for col in ["online_order", "table_booking"]:
+        if col in df.columns:
+            df[col] = (
+                df[col].astype(str)
+                .str.strip()
+                .replace({"Yes":"Yes","No":"No","TRUE":"Yes","False":"No","true":"Yes","false":"No"})
+            )
+
+    if "rating" in df.columns:
+        df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
+    if "votes" in df.columns:
+        df["votes"] = pd.to_numeric(df["votes"], errors="coerce")
+
+    return df
 st.set_page_config(layout="wide", page_title="Zomato Dashboard")
 
 # @st.cache_data
@@ -18,33 +46,6 @@ st.set_page_config(layout="wide", page_title="Zomato Dashboard")
 #         df["votes"] = pd.to_numeric(df["votes"], errors="coerce")
 #     return df
 
-@st.cache_data
-def load_data():
-    # Google Drive link
-    url = "https://drive.google.com/file/d/1EPj5DwO4rxEZ88yQR3NqLfcxpg6NWLu2/view?usp=sharing"
-    
-    # Extract file_id and create direct download link
-    file_id = url.split("/")[-2]
-    download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
-    
-    # Read CSV from Google Drive
-    df = pd.read_csv(download_url)
-    
-    # Clean columns
-    for col in ["online_order", "table_booking"]:
-        if col in df.columns:
-            df[col] = (
-                df[col].astype(str)
-                .str.strip()
-                .replace({"Yes":"Yes","No":"No","TRUE":"Yes","False":"No","true":"Yes","false":"No"})
-            )
-    
-    if "rating" in df.columns:
-        df["rating"] = pd.to_numeric(df["rating"], errors="coerce")
-    if "votes" in df.columns:
-        df["votes"] = pd.to_numeric(df["votes"], errors="coerce")
-    
-    return df
 
 df = load_data()
 
@@ -473,5 +474,6 @@ if choice == 20:
 
 # Footer
 st.sidebar.markdown("---")
+
 
 
