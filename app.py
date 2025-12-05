@@ -9,15 +9,28 @@ import os
 
 @st.cache_data
 def load_data():
-    # Google Drive file ID
+    import gdown
+    import os
+    import pandas as pd
+
     file_id = "1EPj5DwO4rxEZ88yQR3NqLfcxpg6NWLu2"
     output = "ZomatoCleanedData.csv"
 
     if not os.path.exists(output):
-        gdown.download(f"https://drive.google.com/uc?id={file_id}", output, quiet=False)
+        url = f"https://drive.google.com/uc?id={file_id}"
+        try:
+            gdown.download(url, output, quiet=False, use_cookies=False)
+        except Exception as e:
+            st.error(f"Error downloading the file: {e}")
+            return pd.DataFrame()  
 
-    df = pd.read_csv(output)
+    try:
+        df = pd.read_csv(output)
+    except Exception as e:
+        st.error(f"Error reading the CSV file: {e}")
+        return pd.DataFrame()
 
+    # تنظيف الأعمدة
     for col in ["online_order", "table_booking"]:
         if col in df.columns:
             df[col] = (
@@ -474,6 +487,7 @@ if choice == 20:
 
 # Footer
 st.sidebar.markdown("---")
+
 
 
 
